@@ -10,7 +10,7 @@ It is an R package for searching the List of plant species in China (currently 2
 To install the package, please use the following commands:
 
 ```R
-devtools::install_github("helixcn/LPSC")
+devtools::install_github("helixcn/LPSC", build_vignettes = TRUE)
 ```
 
 If you haven't had `devtools` installed, please install it by typing `"install.packages("devtools")"` in the R console.
