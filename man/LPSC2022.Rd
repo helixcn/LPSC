@@ -9,7 +9,7 @@ List of plant species in China (2022 Edition)
 }
 \usage{data("LPSC2022")}
 \format{
-  A data frame with 231945 observations on the following 75 variables.
+  A data frame with 117348 observations on the following 75 variables.
   \describe{
     \item{\code{name_code}}{a character vector}
     \item{\code{family_id}}{a character vector}
@@ -68,14 +68,14 @@ List of plant species in China (2022 Edition)
     \item{\code{order_c_py}}{a character vector}
     \item{\code{family_c_py}}{a character vector}
     \item{\code{superfamily_c_py}}{a numeric vector}
-    \item{\code{record_id}}{a character vector}
+    \item{\code{record_id.x}}{a character vector}
     \item{\code{distribution}}{a character vector}
     \item{\code{distribution_c}}{a character vector}
     \item{\code{level4}}{a character vector}
     \item{\code{sea}}{a numeric vector}
     \item{\code{distribution_back}}{a character vector}
     \item{\code{EditTime.y}}{a numeric vector}
-    \item{\samp{T-record_id}}{a character vector}
+    \item{\code{record_id.y}}{a character vector}
     \item{\code{author.y}}{a numeric vector}
     \item{\code{author_c}}{a character vector}
     \item{\code{year}}{a character vector}
@@ -99,6 +99,6 @@ List of plant species in China (2022 Edition), 2022, Plant Data Center of Chines
 }
 \examples{
 data(LPSC2022)
-## maybe str(LPSC2022) ; plot(LPSC2022) ...
+head(LPSC2022)
 }
 \keyword{datasets}

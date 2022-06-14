@@ -21,6 +21,7 @@
 ################# data since 0.1.6
 ## library(here)
 ## library(openxlsx)
+## library(usethis)
 ## sheet1_scientific_names <- read.xlsx("sp2000-2022-scientific_names-1.052-完整版.xlsx", sheet = 1)
 ## sheet2_specialist_scientificname <- read.xlsx("sp2000-2022-scientific_names-1.052-完整版.xlsx", sheet = 2)
 ## sheet3_sp2000_statuses <- read.xlsx("sp2000-2022-scientific_names-1.052-完整版.xlsx", sheet = 3)
@@ -42,14 +43,17 @@
 ##               by.y = "name_code",
 ##               all = TRUE)
 ## LPSC2022 <- merge(res2, sheet8_references,
-##                       by.x = "name_code",
-##                       by.y = "record_id",
-##                       all = TRUE)
+##                   by.x = "name_code",
+##                   by.y = "T-record_id",
+##                   all = TRUE)
 ##
 ## # write.xlsx(res3, "data_merged_from_xlsx.xlsx")
 ##
-## package.skeleton(name = "SPSC", list = "LPSC2022")
-
+## # package.skeleton(name = "SPSC", list = "LPSC2022")
+##
+## use_data(LPSC2022, overwrite = TRUE) # save in 'xz' in the 'data' folder
+##
+## prompt(LPSC2022) # generate the Rd file, edit the Rd file in the man folder.
 
 
 ############### Functions ###################

@@ -1,10 +1,12 @@
 Package: LPSC
 Type: Package
 Title: Tools for searching List of plant species in China
-Version: 0.2.0
-Date: 2022-6-8
-Authors@R: person("Jinlong", "Zhang", role = c("aut", "cre"),
-             email = "jinlongzhang01@gmail.com")
+Version: 0.3.0
+Date: 2022-6-14
+Authors@R: person("Jinlong", "Zhang", 
+             role = c("aut", "cre"),
+             email = "jinlongzhang01@gmail.com", 
+             comment = c(ORCID = "0000-0002-1161-5460"))
 Author: Jinlong Zhang [aut, cre]
 Maintainer: Jinlong Zhang <jinlongzhang01@gmail.com>
 Description: This package provides a number of useful tools 
