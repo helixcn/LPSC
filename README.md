@@ -52,11 +52,8 @@ make_taxa_table(ttt)
   
 As the data came from List of plant species in China (2022 Edition), the database must be cited when you use this package.
 
-## Citation of the database in English
-
 - List of plant species in China (2022 Edition), 2022, Plant Data Center of Chinese Academy of Sciences, DOI:10.12282/plantdata.0061
 
-## Citation of the database  in Chinese
 - 中国植物物种名录（2022版）,(中国科学院植物研究所), 2022, 中国科学院植物科学数据中心, DOI:10.12282/plantdata.0061
 
 
