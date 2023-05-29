@@ -45,7 +45,9 @@
 #' get_accepted_name("Michelia")
 #' get_accepted_name(c("Michelia", "magnolia"))
 #' get_accepted_name("Michelia maudiae")
+#'
 get_accepted_name <- function(x, db = LPSC::dat_all_sp2023) {
+
   get_accepted_name_one <- function(x, db) {
 
     if (length(x) > 1) {
@@ -55,9 +57,9 @@ get_accepted_name <- function(x, db = LPSC::dat_all_sp2023) {
     db_empty_row <- db[1, ]
     db_empty_row[1, ] <- NA
 
-    sub_dat_sci_names <- subset(db, db$canonical_name %in% x)
+    sub_dat_sci_names <- subset(db, db$canonical_name %in% x) # Use full db here
 
-    sub_sub_dat_sci_names <- subset(
+    sub_sub_dat_sci_names <- subset( # Use full db here
       db,
       db$name_code %in% c(
         sub_dat_sci_names$accepted_name_code,
@@ -65,16 +67,21 @@ get_accepted_name <- function(x, db = LPSC::dat_all_sp2023) {
       )
     ) # select the rows that the name_code/accepted_name_code appear for the query
 
-    if (nrow(sub_sub_dat_sci_names) > 1) {
-      # If x is a synonym
+    if (nrow(sub_sub_dat_sci_names) > 1 ) {
       comparison <- sub_sub_dat_sci_names$accepted_name_code ==
         sub_sub_dat_sci_names$name_code
       accepted_name <- subset(sub_sub_dat_sci_names, subset = comparison)
+
+      if(nrow(sub_sub_dat_sci_names) > 2){
+       message("Warning: Only authors are different in the scientific name, full data is shown")
+        accepted_name <- sub_sub_dat_sci_names
+      }
+
     } else{
       # x is an accepted species or could not be found in the database
       accepted_name <- sub_dat_sci_names
     }
-    if (nrow(accepted_name) > 0) {
+    if (nrow(accepted_name) %in% c(1, 2)) {
       print(paste(
         "The accepted name for",
         x,
@@ -83,11 +90,18 @@ get_accepted_name <- function(x, db = LPSC::dat_all_sp2023) {
               accepted_name$author)
       ))
     } else {
+      if (nrow(accepted_name) > 2) {
+        print("Check the results carefully!")
+      } else {
       print(paste(x, "could not be found in the databse"))
       accepted_name <- db_empty_row
+      }
     }
     return(cbind(YOUR_SEARCH = x, accepted_name))
   }
+
+  x <- Cap(REPLACE(x)) # Standardise the search, in case,
+  # there are multiple white spaces or the first letter is not capitalised.
 
   ## obtain a subset of the db, the subsequent query will be based on this subset.
   ## This is the key to speedup the search
@@ -101,8 +115,6 @@ get_accepted_name <- function(x, db = LPSC::dat_all_sp2023) {
     )
   )
 
-  x <- Cap(REPLACE(x)) # Standardise the search, in case,
-  # there are multiple white spaces or the first letter is not capitalised.
   res_seed <- get_accepted_name_one(x[1], db = sub_sub_dat_sci_names)
   if (length(x) > 1) {
     for (i in 2:length(x)) {
@@ -115,7 +127,7 @@ get_accepted_name <- function(x, db = LPSC::dat_all_sp2023) {
 
 #' Show details of species
 #'
-#' @param x a character string representing scientif names or Chinese names of plants
+#' @param x a character string representing scientific names or Chinese names of plants
 #' @param db database used
 #'
 #' @return a dataframe showing the details of accepted species of List of Plant Species China
