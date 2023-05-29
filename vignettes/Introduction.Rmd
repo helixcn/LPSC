@@ -43,8 +43,6 @@ aaaa <- get_accepted_name(c(
   "Machilus chekiangensis"
 ))
 
-make_taxa_table(aaaa)
-
 get_accepted_name(c("Carex phaeopoda"))
 get_accepted_name(c("Cyclobalanopsis myrsinifolia"))
 get_accepted_name(c("Carex phaeopoda2",
@@ -58,7 +56,7 @@ show_detail("华中山楂2")
 show_detail(c("Carex phaeopoda",
                            "苹果", "华中山楂"))
 show_detail("刺枝麻黄")
-ttt <- show_detail("单子麻黄2")
+show_detail("单子麻黄2")
 
 ```
 
