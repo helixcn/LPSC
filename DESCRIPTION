@@ -1,10 +1,14 @@
 Package: LPSC
 Type: Package
 Title: Tools for searching Checklist of Plant Species in China  
-Version: 0.6.0
+Version: 0.6.1
 Date: 2023-05-29
 Depends: R (>= 3.5.0)
-Author: Jinlong Zhang
+Authors@R: person("Jinlong", "Zhang", 
+             role = c("aut", "cre"),
+             email = "jinlongzhang01@gmail.com", 
+             comment = c(ORCID = "0000-0002-1161-5460"))
+Author: Jinlong Zhang [aut, cre]
 Maintainer: Jinlong Zhang <jinlongzhang01@gmail.com>
 Description: Looking up species names and their status from Checklist of Plant Species in China (version 2023), and more.
 License: GPL-2
