@@ -1,25 +1,19 @@
 Package: LPSC
 Type: Package
-Title: Tools for searching List of plant species in China
-Version: 0.3.0
-Date: 2022-6-14
-Authors@R: person("Jinlong", "Zhang", 
-             role = c("aut", "cre"),
-             email = "jinlongzhang01@gmail.com", 
-             comment = c(ORCID = "0000-0002-1161-5460"))
-Author: Jinlong Zhang [aut, cre]
-Maintainer: Jinlong Zhang <jinlongzhang01@gmail.com>
-Description: This package provides a number of useful tools 
-   for searching the local version of
-   Tools for searching List of plant species in China.
-License: GPL-3 + file LICENSE
+Title: Tools for searching Checklist of Plant Species in China  
+Version: 0.5.0
+Date: 2023-05-27
 Depends: R (>= 3.5.0)
+Author: Jinlong Zhang
+Maintainer: Jinlong Zhang <jinlongzhang01@gmail.com>
+Description: Looking up species names and their status from Checklist of Plant Species in China (version 2023), and more.
+License: GPL-2
 Encoding: UTF-8
+RoxygenNote: 7.2.3
 LazyData: true
 LazyDataCompression: xz
 LazyLoad: yes
-URL: https://github.com/helixcn/LPSC
-RoxygenNote: 7.2.0
+NeedsCompilation: no
 Suggests: 
     knitr,
     rmarkdown
