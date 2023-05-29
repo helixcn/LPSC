@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 It is an R package for searching the Checklist of Plant Species in China (currently 2023). This will help standardising the checklist of a given region.
 
-Note: The codes for this package have been rewritten due to the extensive change in 2023 database.
+Note: The codes of this package have been rewritten due to the extensive changes in the database released in 2023.
 
 # How to install
 
@@ -30,11 +30,12 @@ devtools::install_github("helixcn/LPSC", build_vignettes = TRUE)
 
 If you haven't had `devtools` installed, please install it by typing `"install.packages("devtools")"` in the R console.
 
-
 # How to use
 
 ```{R}
 library(LPSC)
+
+# 查询物种的接受名（只限学名）
 
 get_accepted_name("Cyclobalanopsis myrsinifolia")
 
@@ -49,8 +50,8 @@ get_accepted_name(c("Carex phaeopoda2",
                     "Carex phaeopoda"))
 get_accepted_name(c("Carex phaeopoda",
                     "苹果", "华中山楂", "华中山楂2"))
-					
-# 直接查询中文名或学名（仅限接受名）
+
+# 查询中文名或学名（仅限接受名），显示科、属和分布等信息
 
 show_detail("华中山楂2")
 show_detail(c("Carex phaeopoda",
@@ -58,10 +59,10 @@ show_detail(c("Carex phaeopoda",
 show_detail("刺枝麻黄")
 show_detail("单子麻黄2")
 
+# 查询物种的濒危等级，学名或者中文名均可
 # Search species conservation status in 中国生物多样性红色名录—高等植物卷（2020）
 # China Biodiversity Red List (2020) higher plants
 
-library(LPSC)
 show_iucn_status("竹叶青冈")
 show_iucn_status("木姜叶青冈")
 show_iucn_status("Quercus glauca")
