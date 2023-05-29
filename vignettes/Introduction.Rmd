@@ -58,6 +58,16 @@ show_detail(c("Carex phaeopoda",
 show_detail("刺枝麻黄")
 show_detail("单子麻黄2")
 
+# Search species conservation status in 中国生物多样性红色名录—高等植物卷（2020）
+# China Biodiversity Red List (2020) higher plants
+
+library(LPSC)
+show_iucn_status("竹叶青冈")
+show_iucn_status("木姜叶青冈")
+show_iucn_status("Quercus glauca")
+show_iucn_status(c("樟叶泡花树", "香港木兰", "蛇藤", "匙叶黄杨", "海南姜"))
+show_iucn_status(c("樟叶泡花树", "香港木兰", "蛇藤", "", "Wikstroemia nutans"))
+
 ```
 
 # How to cite

@@ -28,7 +28,7 @@
 # dat_databases           <- read.xlsx(xlsx_name, "databases")
 # dat_contact_specialists <- read.xlsx(xlsx_name, "specialists")
 
-#' Look up the accepted name for given scientific names 
+#' Look up the accepted name for given scientific names
 #'
 #' @param x a character vector representing scientific names
 #' @param db the database used, by default CPSC2023
@@ -37,7 +37,7 @@
 #' @export
 #'
 #' @examples
-#' 
+#'
 #' x2 <- "Cinnamomum camphora"
 #' get_accepted_name(x2)
 #' get_accepted_name(c("Michelia maudiae", "Machilus", "Cinnamomum camphora"))
@@ -47,16 +47,16 @@
 #' get_accepted_name("Michelia maudiae")
 get_accepted_name <- function(x, db = LPSC::dat_all_sp2023) {
   get_accepted_name_one <- function(x, db) {
-    
+
     if (length(x) > 1) {
       stop("Only one name allowed")
     }
-    
+
     db_empty_row <- db[1, ]
     db_empty_row[1, ] <- NA
-    
+
     sub_dat_sci_names <- subset(db, db$canonical_name %in% x)
-    
+
     sub_sub_dat_sci_names <- subset(
       db,
       db$name_code %in% c(
@@ -64,7 +64,7 @@ get_accepted_name <- function(x, db = LPSC::dat_all_sp2023) {
         sub_dat_sci_names$name_code
       )
     ) # select the rows that the name_code/accepted_name_code appear for the query
-    
+
     if (nrow(sub_sub_dat_sci_names) > 1) {
       # If x is a synonym
       comparison <- sub_sub_dat_sci_names$accepted_name_code ==
@@ -88,19 +88,19 @@ get_accepted_name <- function(x, db = LPSC::dat_all_sp2023) {
     }
     return(cbind(YOUR_SEARCH = x, accepted_name))
   }
-  
+
   ## obtain a subset of the db, the subsequent query will be based on this subset.
   ## This is the key to speedup the search
   sub_dat_sci_names <- subset(db, db$canonical_name %in% x)
-  
+
   sub_sub_dat_sci_names <- subset(
     db,
     db$name_code %in% c(
       sub_dat_sci_names$accepted_name_code,
       sub_dat_sci_names$name_code
     )
-  ) 
-  
+  )
+
   x <- Cap(REPLACE(x)) # Standardise the search, in case,
   # there are multiple white spaces or the first letter is not capitalised.
   res_seed <- get_accepted_name_one(x[1], db = sub_sub_dat_sci_names)
@@ -122,7 +122,7 @@ get_accepted_name <- function(x, db = LPSC::dat_all_sp2023) {
 #' @export
 #'
 #' @examples
-#' 
+#'
 #' res1 <- show_detail(c("木栏","香港木兰"))
 #' show_detail(c("樟叶泡花树", "Machilus"))
 #' show_detail("Machilus gamblei")
@@ -131,17 +131,18 @@ get_accepted_name <- function(x, db = LPSC::dat_all_sp2023) {
 #' show_detail(c("滇青冈", "Quercus glaucoides"))
 #' show_detail(c("", "Quercus glaucoides"))
 #' show_detail(c("", ""))
+#'
 show_detail <- function(x, db = LPSC::dat_all_accepted_sp2023) {
   ## For accepted names only (Chinese names work)
   show_detail_one <- function(x, db) {
     if (length(x) > 1) {
       stop("only one species allowed")
     }
-    
+
     empty_row <- db[1, ]
-    empty_row[1, ] <- NA # Empty row must be shown in the result, 
+    empty_row[1, ] <- NA # Empty row must be shown in the result,
     # and the values for all colums are NAs.
-    
+
     sub_dat1 <- subset(db, db$canonical_name %in% x) # Scientific name
     sub_dat2 <- subset(db, db$species_c %in% x) # Chinese Name
     res <- unique(rbind(sub_dat1, sub_dat2))
@@ -153,7 +154,7 @@ show_detail <- function(x, db = LPSC::dat_all_accepted_sp2023) {
     }
     return(cbind(YOUR_SEARCH = x, res))
   }
-  
+
   x <- Cap(REPLACE(x)) # Standardise the search, in case
   # there are multiple whitespaces or the first letter is not capitalised.
   res_seed <- show_detail_one(x[1], db = db)
@@ -175,6 +176,7 @@ show_detail <- function(x, db = LPSC::dat_all_accepted_sp2023) {
 #' @examples
 #'
 #' Cap("michelia")
+#'
 Cap <- function(x) {
   paste(toupper(substring(x, 1, 1)),
         tolower(substring(x, 2)), sep = "")
@@ -195,4 +197,55 @@ REPLACE <- function(x) {
                                gsub(", +", ",", x)))
   res <- gsub("^[[:space:]]+|[[:space:]]+$", "", temp)
   return(res)
+}
+
+#' Search for China Biodiversity Red List using species names
+#'
+#' @param x Character string
+#' @param db databased used in the analysis, by default China Biodiversity Red List (2020) higher plants
+#'
+#' @return a dataframe containing the results
+#' @export
+#'
+#' @examples
+#' library(LPSC)
+#'show_iucn_status("竹叶青冈")
+#'show_iucn_status("木姜叶青冈")
+#'show_iucn_status("Quercus glauca")
+#'show_iucn_status(c("樟叶泡花树", "香港木兰", "蛇藤", "匙叶黄杨", "海南姜"))
+#'show_iucn_status(c("樟叶泡花树", "香港木兰", "蛇藤", "", "Wikstroemia nutans"))
+#'
+show_iucn_status <- function(x, db = LPSC::dat_CBRL2020_higher_plants) {
+  ## For accepted names only (Chinese names work)
+  show_detail_one <- function(x, db) {
+    if (length(x) > 1) {
+      stop("only one species allowed")
+    }
+
+    empty_row <- db[1, ]
+    empty_row[1, ] <- NA # Empty row must be shown in the result,
+    # and the values for all colums are NAs.
+
+    sub_dat1 <- subset(db, db$species %in% x) # Scientific name
+    sub_dat2 <- subset(db, db$species_cn %in% x) # Chinese Name
+    res <- unique(rbind(sub_dat1, sub_dat2))
+    if (nrow(res) < 1) {
+      res <- empty_row
+      print(paste("Note: ",
+                  x[!x %in% unique(c(res$species, res$species_cn))],
+                  "could not be found in the database"))
+    }
+    return(cbind(YOUR_SEARCH = x, res))
+  }
+
+  x <- Cap(REPLACE(x)) # Standardize the search, in case
+  # there are multiple white spaces or the first letter is not capitalized.
+  res_seed <- show_detail_one(x[1], db = db)
+  if (length(x) > 1) {
+    for (i in 2:length(x)) {
+      res_temp <- show_detail_one(x[i], db = db)
+      res_seed <- rbind(res_seed, res_temp)
+    }
+  }
+  return(res_seed)
 }
