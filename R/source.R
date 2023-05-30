@@ -38,28 +38,29 @@
 #'
 #' @examples
 #'
-#' x2 <- "Cinnamomum camphora"
-#' get_accepted_name(x2)
+#' get_accepted_name("Cinnamomum camphora")
 #' get_accepted_name(c("Michelia maudiae", "Machilus", "Cinnamomum camphora"))
 #' get_accepted_name(c("Michelia maudiae", "Cinnamomum camphora", "machilus", ""))
 #' get_accepted_name("Michelia")
 #' get_accepted_name(c("Michelia", "magnolia"))
 #' get_accepted_name("Michelia maudiae")
+#' get_accepted_name("Ziziphus jujuba")
+#'
+#'
 #'
 get_accepted_name <- function(x, db = LPSC::dat_all_sp2023) {
-
-  get_accepted_name_one <- function(x, db) {
-
+  get_accepted_name_one <- function(x, db = LPSC::dat_all_sp2023) {
     if (length(x) > 1) {
       stop("Only one name allowed")
     }
+    db_empty_row <- db[1,]
+    db_empty_row[1,] <- NA
 
-    db_empty_row <- db[1, ]
-    db_empty_row[1, ] <- NA
+    sub_dat_sci_names <-
+      subset(db, db$canonical_name %in% x) # Use full db here
 
-    sub_dat_sci_names <- subset(db, db$canonical_name %in% x) # Use full db here
-
-    sub_sub_dat_sci_names <- subset( # Use full db here
+    sub_sub_dat_sci_names <- subset(
+      # Use full db here
       db,
       db$name_code %in% c(
         sub_dat_sci_names$accepted_name_code,
@@ -67,35 +68,65 @@ get_accepted_name <- function(x, db = LPSC::dat_all_sp2023) {
       )
     ) # select the rows that the name_code/accepted_name_code appear for the query
 
-    if (nrow(sub_sub_dat_sci_names) > 1 ) {
-      comparison <- sub_sub_dat_sci_names$accepted_name_code ==
-        sub_sub_dat_sci_names$name_code
-      accepted_name <- subset(sub_sub_dat_sci_names, subset = comparison)
+    if (nrow(sub_sub_dat_sci_names) >= 1) {
+      # The goal is to show the full scientific name (of a query) as well as to show its accepted name
 
-      if(nrow(sub_sub_dat_sci_names) > 2){
-       message("Warning: Only authors are different in the scientific name, full data is shown")
-        accepted_name <- sub_sub_dat_sci_names
-      }
+      df_sub_sub_dat_sci_names <-
+        subset(
+          sub_sub_dat_sci_names,
+          select = c(
+            "accepted_name_code",
+            "name_code",
+            "canonical_name",
+            "author"
+          )
+        ) # Create a new data.frame whose full name to be added to sub_sub_dat_sci_names
 
-    } else{
-      # x is an accepted species or could not be found in the database
-      accepted_name <- sub_dat_sci_names
-    }
-    if (nrow(accepted_name) %in% c(1, 2)) {
+      # Create the full scientific name (with authors added)
+      df_sub_sub_dat_sci_names$full_name <-
+        paste(df_sub_sub_dat_sci_names$canonical_name,
+              df_sub_sub_dat_sci_names$author)
+
+      df_sub_sub_dat_sci_names2 <-
+        subset(
+          df_sub_sub_dat_sci_names,
+          select = c("accepted_name_code",
+                     "full_name",
+                     "canonical_name")
+        )
+
+      colnames(df_sub_sub_dat_sci_names2) <-
+        paste0(colnames(df_sub_sub_dat_sci_names2), "_x")
+
+      accepted_name <- merge(
+        df_sub_sub_dat_sci_names2,
+        sub_sub_dat_sci_names,
+        by.x = "accepted_name_code_x",
+        by.y = "name_code"
+      )
+
+      ## Select the entries
+      accepted_name0 <-
+        subset(accepted_name,
+               subset = accepted_name$canonical_name_x %in% x)
+
       print(paste(
         "The accepted name for",
-        x,
+        accepted_name0$full_name_x,
         "is",
-        paste(accepted_name$canonical_name,
-              accepted_name$author)
+        paste(accepted_name0$canonical_name,
+              accepted_name0$author)
       ))
-    } else {
-      if (nrow(accepted_name) > 2) {
-        print("Check the results carefully!")
-      } else {
-      print(paste(x, "could not be found in the databse"))
+
+      accepted_name <- subset(
+        sub_sub_dat_sci_names,
+        subset = sub_sub_dat_sci_names$accepted_name_code %in% accepted_name0$accepted_name_code_x &
+          sub_sub_dat_sci_names$is_accepted_name == 1
+      )
+
+    } else{
       accepted_name <- db_empty_row
-      }
+      print(paste(x, "could not be found in the database"))
     }
     return(cbind(YOUR_SEARCH = x, accepted_name))
   }
@@ -115,7 +146,8 @@ get_accepted_name <- function(x, db = LPSC::dat_all_sp2023) {
     )
   )
 
-  res_seed <- get_accepted_name_one(x[1], db = sub_sub_dat_sci_names)
+  res_seed <-
+    get_accepted_name_one(x[1], db = sub_sub_dat_sci_names)
   if (length(x) > 1) {
     for (i in 2:length(x)) {
       res_temp <- get_accepted_name_one(x[i], db = sub_sub_dat_sci_names)
@@ -151,11 +183,12 @@ show_detail <- function(x, db = LPSC::dat_all_accepted_sp2023) {
       stop("only one species allowed")
     }
 
-    empty_row <- db[1, ]
-    empty_row[1, ] <- NA # Empty row must be shown in the result,
+    empty_row <- db[1,]
+    empty_row[1,] <- NA # Empty row must be shown in the result,
     # and the values for all colums are NAs.
 
-    sub_dat1 <- subset(db, db$canonical_name %in% x) # Scientific name
+    sub_dat1 <-
+      subset(db, db$canonical_name %in% x) # Scientific name
     sub_dat2 <- subset(db, db$species_c %in% x) # Chinese Name
     res <- unique(rbind(sub_dat1, sub_dat2))
     if (nrow(res) < 1) {
@@ -227,37 +260,38 @@ REPLACE <- function(x) {
 #'show_iucn_status(c("樟叶泡花树", "香港木兰", "蛇藤", "匙叶黄杨", "海南姜"))
 #'show_iucn_status(c("樟叶泡花树", "香港木兰", "蛇藤", "", "Wikstroemia nutans"))
 #'
-show_iucn_status <- function(x, db = LPSC::dat_CBRL2020_higher_plants) {
-  ## For accepted names only (Chinese names work)
-  show_detail_one <- function(x, db) {
+show_iucn_status <-
+  function(x, db = LPSC::dat_CBRL2020_higher_plants) {
+    ## For accepted names only (Chinese names work)
+    show_detail_one <- function(x, db) {
+      if (length(x) > 1) {
+        stop("only one species allowed")
+      }
+
+      empty_row <- db[1,]
+      empty_row[1,] <- NA # Empty row must be shown in the result,
+      # and the values for all colums are NAs.
+
+      sub_dat1 <- subset(db, db$species %in% x) # Scientific name
+      sub_dat2 <- subset(db, db$species_cn %in% x) # Chinese Name
+      res <- unique(rbind(sub_dat1, sub_dat2))
+      if (nrow(res) < 1) {
+        res <- empty_row
+        print(paste("Note: ",
+                    x[!x %in% unique(c(res$species, res$species_cn))],
+                    "could not be found in the database"))
+      }
+      return(cbind(YOUR_SEARCH = x, res))
+    }
+
+    x <- Cap(REPLACE(x)) # Standardize the search, in case
+    # there are multiple white spaces or the first letter is not capitalized.
+    res_seed <- show_detail_one(x[1], db = db)
     if (length(x) > 1) {
-      stop("only one species allowed")
+      for (i in 2:length(x)) {
+        res_temp <- show_detail_one(x[i], db = db)
+        res_seed <- rbind(res_seed, res_temp)
+      }
     }
-
-    empty_row <- db[1, ]
-    empty_row[1, ] <- NA # Empty row must be shown in the result,
-    # and the values for all colums are NAs.
-
-    sub_dat1 <- subset(db, db$species %in% x) # Scientific name
-    sub_dat2 <- subset(db, db$species_cn %in% x) # Chinese Name
-    res <- unique(rbind(sub_dat1, sub_dat2))
-    if (nrow(res) < 1) {
-      res <- empty_row
-      print(paste("Note: ",
-                  x[!x %in% unique(c(res$species, res$species_cn))],
-                  "could not be found in the database"))
-    }
-    return(cbind(YOUR_SEARCH = x, res))
+    return(res_seed)
   }
-
-  x <- Cap(REPLACE(x)) # Standardize the search, in case
-  # there are multiple white spaces or the first letter is not capitalized.
-  res_seed <- show_detail_one(x[1], db = db)
-  if (length(x) > 1) {
-    for (i in 2:length(x)) {
-      res_temp <- show_detail_one(x[i], db = db)
-      res_seed <- rbind(res_seed, res_temp)
-    }
-  }
-  return(res_seed)
-}

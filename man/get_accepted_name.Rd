@@ -19,11 +19,14 @@ Look up the accepted name for given scientific names
 }
 \examples{
 
-x2 <- "Cinnamomum camphora"
-get_accepted_name(x2)
+get_accepted_name("Cinnamomum camphora")
 get_accepted_name(c("Michelia maudiae", "Machilus", "Cinnamomum camphora"))
 get_accepted_name(c("Michelia maudiae", "Cinnamomum camphora", "machilus", ""))
 get_accepted_name("Michelia")
 get_accepted_name(c("Michelia", "magnolia"))
 get_accepted_name("Michelia maudiae")
+get_accepted_name("Ziziphus jujuba")
+
+
+
 }

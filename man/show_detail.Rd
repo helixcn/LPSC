@@ -7,7 +7,7 @@
 show_detail(x, db = LPSC::dat_all_accepted_sp2023)
 }
 \arguments{
-\item{x}{a character string representing scientif names or Chinese names of plants}
+\item{x}{a character string representing scientific names or Chinese names of plants}
 
 \item{db}{database used}
 }
@@ -27,4 +27,5 @@ show_detail("滇青冈")
 show_detail(c("滇青冈", "Quercus glaucoides"))
 show_detail(c("", "Quercus glaucoides"))
 show_detail(c("", ""))
+
 }

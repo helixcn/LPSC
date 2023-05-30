@@ -18,4 +18,5 @@ Capitalize the first letter
 \examples{
 
 Cap("michelia")
+
 }
