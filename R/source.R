@@ -49,7 +49,7 @@
 #'
 #'
 get_accepted_name <- function(x, db = LPSC::dat_all_sp2023) {
-  get_accepted_name_one <- function(x, db = LPSC::dat_all_sp2023) {
+  get_accepted_name_one <- function(x, db) {
     if (length(x) > 1) {
       stop("Only one name allowed")
     }
@@ -105,24 +105,31 @@ get_accepted_name <- function(x, db = LPSC::dat_all_sp2023) {
         by.y = "name_code"
       )
 
-      ## Select the entries
       accepted_name0 <-
         subset(accepted_name,
                subset = accepted_name$canonical_name_x %in% x)
-
-      print(paste(
-        "The accepted name for",
-        accepted_name0$full_name_x,
-        "is",
-        paste(accepted_name0$canonical_name,
-              accepted_name0$author)
-      ))
 
       accepted_name <- subset(
         sub_sub_dat_sci_names,
         subset = sub_sub_dat_sci_names$accepted_name_code %in% accepted_name0$accepted_name_code_x &
           sub_sub_dat_sci_names$is_accepted_name == 1
       )
+
+      if(nrow(accepted_name) < 1){
+        accepted_name <- subset(
+          sub_sub_dat_sci_names,
+          subset = sub_sub_dat_sci_names$accepted_name_code %in% accepted_name0$accepted_name_code_x
+        )
+        warning(paste(sub_sub_dat_sci_names$canonical_name, "is not an accepted name in the database"))
+      } else {
+        print(paste(
+          "The accepted name for",
+          accepted_name0$full_name_x,
+          "is",
+          paste(accepted_name0$canonical_name,
+                accepted_name0$author)
+        ))
+      }
 
     } else{
       accepted_name <- db_empty_row
